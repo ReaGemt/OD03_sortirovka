@@ -1,14 +1,13 @@
 # sorting_algorithms/cocktail_shaker_sort.py
 from matplotlib import pyplot as plt
 from visualization import visualize_sorting
-import time
 import logging
-
 
 def cocktail_shaker_sort(arr):
     n = len(arr)
     start = 0
     end = n - 1
+    logging.info(f"Начальный массив: {arr}")
     plt.ion()
     fig = plt.figure()
 
@@ -36,6 +35,7 @@ def cocktail_shaker_sort(arr):
 
         start += 1
 
+    logging.info(f"Конечный отсортированный массив: {arr}")
     visualize_sorting(arr, "Конечный отсортированный массив")
     plt.show(block=True)
     return arr

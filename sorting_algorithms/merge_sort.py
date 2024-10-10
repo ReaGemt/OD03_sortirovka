@@ -1,5 +1,6 @@
 # sorting_algorithms/merge_sort.py
 from visualization import visualize_sorting
+import logging
 
 def merge_sort(arr):
     if len(arr) > 1:
@@ -14,6 +15,7 @@ def merge_sort(arr):
 def merge(arr, left_half, right_half):
     i = j = k = 0
     while i < len(left_half) and j < len(right_half):
+        logging.debug(f"Сравниваем {left_half[i]} и {right_half[j]}")
         if left_half[i] < right_half[j]:
             arr[k] = left_half[i]
             i += 1

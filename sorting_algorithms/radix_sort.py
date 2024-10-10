@@ -1,7 +1,6 @@
 # sorting_algorithms/radix_sort.py
 from matplotlib import pyplot as plt
 from visualization import visualize_sorting
-import time
 import logging
 
 def counting_sort_for_radix(arr, exp):
@@ -28,6 +27,7 @@ def counting_sort_for_radix(arr, exp):
         visualize_sorting(arr, f"Построение выходного массива для разряда {exp}")
 
 def radix_sort(arr):
+    logging.info(f"Начальный массив: {arr}")
     max_val = max(arr)
     exp = 1
     plt.ion()
