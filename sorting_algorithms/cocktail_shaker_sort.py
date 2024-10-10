@@ -1,15 +1,14 @@
-# sorting_algorithms/shell_sort.py
+# sorting_algorithms/cocktail_shaker_sort.py
 from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
 
-
-def shell_sort(arr):
+def cocktail_shaker_sort(arr):
     """
-    Реализация сортировки Шелла с визуализацией и логированием.
+    Реализация шейкерной сортировки с визуализацией и логированием.
 
-    Алгоритм сортирует элементы массива по возрастанию, используя промежутки (gap),
-    которые постепенно уменьшаются. Это улучшенная версия сортировки вставками.
+    Алгоритм представляет собой модификацию пузырьковой сортировки, проходя по массиву
+    слева направо, а затем обратно справа налево, перемещая большие элементы вправо, а маленькие — влево.
 
     Parameters:
     - arr: массив для сортировки
@@ -19,37 +18,45 @@ def shell_sort(arr):
     """
     n = len(arr)
     logging.info(f"Начальный массив: {arr}")
+    start = 0  # Начальный индекс
+    end = n - 1  # Конечный индекс
 
-    # Инициализируем начальный разрыв (gap), который равен половине длины массива
-    gap = n // 2
-
-    plt.ion()  # Включаем интерактивный режим для визуализации
+    plt.ion()
     fig = plt.figure()
 
-    # Цикл продолжается до тех пор, пока разрыв (gap) больше нуля
-    while gap > 0:
-        logging.debug(f"Текущий разрыв (gap): {gap}")
+    # Основной цикл: сортируем в обе стороны
+    while start <= end:
+        swapped = False
+        logging.debug(f"Проход слева направо. Начальный индекс: {start}, Конечный индекс: {end}")
 
-        # Проходим по всем элементам массива, начиная с элемента, стоящего после разрыва
-        for i in range(gap, n):
-            temp = arr[i]  # Сохраняем текущий элемент для дальнейшей вставки
-            j = i
+        # Проход слева направо
+        for i in range(start, end):
+            logging.debug(f"Сравниваем элементы {arr[i]} и {arr[i+1]}")
+            if arr[i] > arr[i + 1]:
+                logging.debug(f"Обмен {arr[i]} и {arr[i+1]}")
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+                visualize_sorting(arr, f"Обмен {arr[i]} и {arr[i+1]}")
 
-            # Выполняем сдвиг элементов, если они больше текущего temp
-            while j >= gap and arr[j - gap] > temp:
-                logging.debug(f"Сдвигаем {arr[j - gap]} на позицию {j}")
-                arr[j] = arr[j - gap]
-                j -= gap  # Сдвигаем указатель на gap позиций назад
+        # Если не было обменов, сортировка завершена
+        if not swapped:
+            logging.info("Массив уже отсортирован. Завершение.")
+            break
+        swapped = False
+        end -= 1  # Уменьшаем конец, так как последний элемент уже отсортирован
 
-            # Вставляем текущий элемент (temp) на его правильное место
-            arr[j] = temp
-            logging.debug(f"Вставляем элемент {temp} на позицию {j}")
-            visualize_sorting(arr, f"Текущий разрыв {gap}. Вставка элемента {temp}")
+        logging.debug(f"Проход справа налево. Начальный индекс: {start}, Конечный индекс: {end}")
 
-        # Уменьшаем разрыв (gap) в два раза
-        gap //= 2
-        logging.debug(f"Уменьшение разрыва. Новый разрыв (gap): {gap}")
-        visualize_sorting(arr, f"Уменьшение разрыва до {gap}")
+        # Проход справа налево
+        for i in range(end - 1, start - 1, -1):
+            logging.debug(f"Сравниваем элементы {arr[i]} и {arr[i+1]}")
+            if arr[i] > arr[i + 1]:
+                logging.debug(f"Обмен {arr[i]} и {arr[i+1]}")
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+                visualize_sorting(arr, f"Обмен {arr[i]} и {arr[i+1]}")
+
+        start += 1  # Увеличиваем начало, так как первый элемент уже отсортирован
 
     logging.info(f"Конечный отсортированный массив: {arr}")
     visualize_sorting(arr, "Конечный отсортированный массив")
