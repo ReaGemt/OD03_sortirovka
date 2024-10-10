@@ -26,12 +26,10 @@ arrays = {
     "Shell Sort": [12, 34, 54, 2, 3],
 }
 
-
 # Функция для настройки уровня логирования
 def set_logging_level(level):
     logging.getLogger().setLevel(level)
     logging.info(f"Уровень логирования установлен на: {logging.getLevelName(level)}")
-
 
 # Функция для запуска выбранного алгоритма
 def run_selected_sort():
@@ -67,7 +65,6 @@ def run_selected_sort():
 
     # Окончательная визуализация для всех алгоритмов
     finalize_visualization(enable_visualization=enable_visualization)
-
 
 # Создаем главное окно Tkinter
 root = tk.Tk()

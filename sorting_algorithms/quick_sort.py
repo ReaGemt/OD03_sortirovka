@@ -31,14 +31,11 @@ def quick_sort(arr, start=0, end=None, iteration=0, enable_visualization=True, u
     # Рекурсивно сортируем левую часть
     iteration = quick_sort(arr, start, pivot_index - 1, iteration, enable_visualization, update_rate)
 
-    # Визуализируем перед тем как перейти к правой части
-    visualize_sorting(arr, f"Левая часть отсортирована", iteration, update_rate, enable_visualization)
-
     # Рекурсивно сортируем правую часть
     iteration = quick_sort(arr, pivot_index + 1, end, iteration, enable_visualization, update_rate)
 
-    # Визуализируем после сортировки правой части
-    visualize_sorting(arr, f"Правая часть отсортирована", iteration, update_rate, enable_visualization)
+    # Визуализируем состояние после полной сортировки массива
+    visualize_sorting(arr, f"Часть отсортирована", iteration, update_rate, enable_visualization)
 
     return iteration
 
