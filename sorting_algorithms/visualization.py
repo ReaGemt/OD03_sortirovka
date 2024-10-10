@@ -1,21 +1,25 @@
 # sorting_algorithms/visualization.py
-import time
 import matplotlib.pyplot as plt
-import logging
-
-# Настройка логирования с форматированием
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 
 
-def visualize_sorting(arr, title):
+def visualize_sorting(arr, title, iteration=0, update_rate=10, enable_visualization=True):
     """
     Визуализация текущего состояния сортировки с использованием столбчатой диаграммы.
 
     Parameters:
     - arr: текущий массив для отображения
     - title: заголовок для графика, описывающий текущий шаг сортировки
+    - iteration: текущая итерация сортировки (для контроля частоты обновления)
+    - update_rate: частота обновления визуализации (обновление каждые N итераций)
+    - enable_visualization: включение/выключение визуализации
     """
-    plt.clf()  # Очищаем предыдущий график
-    plt.bar(range(len(arr)), arr, color="blue")  # Столбчатая диаграмма
-    plt.title(title)  # Заголовок графика
-    plt.pause(0.1)  # Пауза для отображения графика (0.1 секунд)
+    if not enable_visualization:
+        return  # Если визуализация отключена, выходим из функции
+
+    # Обновляем график только на каждой N-й итерации
+    if iteration % update_rate == 0:
+        plt.clf()  # Очищаем предыдущий график
+        plt.bar(range(len(arr)), arr, color="blue")  # Столбчатая диаграмма
+        plt.title(title)  # Заголовок графика
+        plt.draw()  # Принудительно отрисовываем график
+        plt.pause(0.01)  # Короткая пауза для обновления (0.01 секунд)

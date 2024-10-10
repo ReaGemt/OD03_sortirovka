@@ -1,52 +1,65 @@
-# sorting_algorithms/counting_sort.py
-from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
+import matplotlib.pyplot as plt
 
-def counting_sort(arr):
+
+def counting_sort(arr, enable_visualization=True, update_rate=10):
     """
-    Реализация сортировки подсчётом с визуализацией и логированием.
-
-    Алгоритм работает, подсчитывая количество вхождений каждого уникального элемента в массиве, а затем
-    размещает элементы в итоговый массив на основе этих подсчетов.
+    Реализация сортировки подсчётом с возможностью включения/выключения визуализации
+    и контролем частоты обновления графиков.
 
     Parameters:
     - arr: массив для сортировки
-
-    Returns:
-    - Отсортированный массив
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков (раз в N итераций)
     """
     logging.info(f"Начальный массив: {arr}")
 
-    # Поиск максимального и минимального значений в массиве
+    # Находим максимальное значение в массиве для создания диапазона
     max_val = max(arr)
     min_val = min(arr)
     range_of_elements = max_val - min_val + 1
 
-    # Инициализация вспомогательных массивов
-    count = [0] * range_of_elements  # Массив для подсчёта количества элементов
-    output = [0] * len(arr)  # Массив для хранения отсортированных элементов
+    # Массив для подсчёта элементов
+    count = [0] * range_of_elements
+    output = [0] * len(arr)
 
-    # Подсчёт количества каждого элемента
-    logging.debug(f"Подсчёт количества элементов...")
+    plt.ion() if enable_visualization else None
+    iteration = 0  # Счётчик для итераций
+
+    # Подсчёт количества вхождений каждого элемента
     for i in range(len(arr)):
         count[arr[i] - min_val] += 1
-        visualize_sorting(count, f"Обновление счётчика для элемента {arr[i]}")
+        iteration += 1
+        # Визуализируем процесс подсчёта
+        visualize_sorting(count, f"Итерация {iteration}: подсчёт", iteration, update_rate, enable_visualization)
 
-    # Модификация count для хранения конечных позиций элементов
-    logging.debug(f"Модификация счётчика для позиций...")
+    # Модифицируем массив count, чтобы хранить индексы конечных позиций элементов
     for i in range(1, len(count)):
         count[i] += count[i - 1]
-        visualize_sorting(count, "Обновление позиции для элемента")
+        iteration += 1
+        # Визуализируем процесс модификации массива count
+        visualize_sorting(count, f"Итерация {iteration}: модификация счётчика", iteration, update_rate,
+                          enable_visualization)
 
-    # Построение выходного массива на основе count
-    logging.debug(f"Построение отсортированного массива...")
+    # Построение выходного массива
     for i in range(len(arr) - 1, -1, -1):
         output[count[arr[i] - min_val] - 1] = arr[i]
         count[arr[i] - min_val] -= 1
-        visualize_sorting(output, f"Вставка элемента {arr[i]} на правильное место")
+        iteration += 1
+        # Визуализируем процесс заполнения выходного массива
+        visualize_sorting(output, f"Итерация {iteration}: построение выходного массива", iteration, update_rate,
+                          enable_visualization)
 
-    logging.info(f"Конечный отсортированный массив: {output}")
-    visualize_sorting(output, "Конечный отсортированный массив")
-    plt.show(block=True)
-    return output
+    # Копируем отсортированный массив обратно в arr
+    for i in range(len(arr)):
+        arr[i] = output[i]
+
+    logging.info(f"Конечный отсортированный массив: {arr}")
+
+    # Финальная визуализация после завершения сортировки
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1,
+                      enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
+
+    return arr

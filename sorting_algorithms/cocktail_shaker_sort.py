@@ -1,64 +1,70 @@
-# sorting_algorithms/cocktail_shaker_sort.py
-from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
+import matplotlib.pyplot as plt
 
-def cocktail_shaker_sort(arr):
+
+def cocktail_shaker_sort(arr, enable_visualization=True, update_rate=10):
     """
-    Реализация шейкерной сортировки с визуализацией и логированием.
-
-    Алгоритм представляет собой модификацию пузырьковой сортировки, проходя по массиву
-    слева направо, а затем обратно справа налево, перемещая большие элементы вправо, а маленькие — влево.
+    Реализация шейкерной сортировки (Cocktail Shaker Sort) с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
-
-    Returns:
-    - Отсортированный массив
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков (раз в N итераций)
     """
-    n = len(arr)
     logging.info(f"Начальный массив: {arr}")
-    start = 0  # Начальный индекс
-    end = n - 1  # Конечный индекс
 
-    plt.ion()
-    fig = plt.figure()
+    n = len(arr)
+    swapped = True
+    start = 0
+    end = n - 1
+    iteration = 0  # Счётчик для итераций
 
-    # Основной цикл: сортируем в обе стороны
-    while start <= end:
+    plt.ion() if enable_visualization else None
+
+    while swapped:
         swapped = False
-        logging.debug(f"Проход слева направо. Начальный индекс: {start}, Конечный индекс: {end}")
 
-        # Проход слева направо
+        # Проход слева направо (как в обычной пузырьковой сортировке)
         for i in range(start, end):
-            logging.debug(f"Сравниваем элементы {arr[i]} и {arr[i+1]}")
+            iteration += 1
             if arr[i] > arr[i + 1]:
-                logging.debug(f"Обмен {arr[i]} и {arr[i+1]}")
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
-                visualize_sorting(arr, f"Обмен {arr[i]} и {arr[i+1]}")
+                logging.debug(f"Обмен элементов {arr[i]} и {arr[i + 1]}")
 
-        # Если не было обменов, сортировка завершена
+            # Визуализируем процесс после каждого обмена
+            visualize_sorting(arr, f"Итерация {iteration}: проход слева направо", iteration, update_rate,
+                              enable_visualization)
+
+        # Если не было обменов, массив уже отсортирован
         if not swapped:
-            logging.info("Массив уже отсортирован. Завершение.")
             break
+
+        # Уменьшаем конец, так как последний элемент уже на своём месте
+        end -= 1
         swapped = False
-        end -= 1  # Уменьшаем конец, так как последний элемент уже отсортирован
 
-        logging.debug(f"Проход справа налево. Начальный индекс: {start}, Конечный индекс: {end}")
-
-        # Проход справа налево
+        # Проход справа налево (обратный проход)
         for i in range(end - 1, start - 1, -1):
-            logging.debug(f"Сравниваем элементы {arr[i]} и {arr[i+1]}")
+            iteration += 1
             if arr[i] > arr[i + 1]:
-                logging.debug(f"Обмен {arr[i]} и {arr[i+1]}")
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
-                visualize_sorting(arr, f"Обмен {arr[i]} и {arr[i+1]}")
+                logging.debug(f"Обмен элементов {arr[i]} и {arr[i + 1]}")
 
-        start += 1  # Увеличиваем начало, так как первый элемент уже отсортирован
+            # Визуализируем процесс после каждого обмена
+            visualize_sorting(arr, f"Итерация {iteration}: проход справа налево", iteration, update_rate,
+                              enable_visualization)
+
+        # Увеличиваем начало, так как первый элемент уже на своём месте
+        start += 1
 
     logging.info(f"Конечный отсортированный массив: {arr}")
-    visualize_sorting(arr, "Конечный отсортированный массив")
-    plt.show(block=True)  # Оставляем график на экране
+
+    # Финальная визуализация после завершения сортировки
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1,
+                      enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
+
     return arr

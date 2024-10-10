@@ -1,53 +1,55 @@
-# sorting_algorithms/shell_sort.py
-from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
+import matplotlib.pyplot as plt
 
-def shell_sort(arr):
+
+def shell_sort(arr, enable_visualization=True, update_rate=10):
     """
-    Реализация сортировки Шелла с визуализацией и логированием.
-
-    Алгоритм улучшает сортировку вставками, добавляя возможность сравнивать элементы,
-    находящиеся на большом расстоянии друг от друга.
+    Реализация сортировки Шелла (Shell Sort) с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
-
-    Returns:
-    - Отсортированный массив
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков (раз в N итераций)
     """
-    n = len(arr)
-    gap = n // 2  # Инициализация разрыва между элементами
     logging.info(f"Начальный массив: {arr}")
 
-    plt.ion()
-    fig = plt.figure()
+    n = len(arr)
+    gap = n // 2  # Начальное значение разрыва (gap)
+    iteration = 0  # Счётчик для отслеживания количества итераций
 
-    # Уменьшаем разрыв на каждом этапе
+    plt.ion() if enable_visualization else None
+
+    # Уменьшаем разрыв, пока он не станет 0
     while gap > 0:
-        logging.debug(f"Текущий разрыв: {gap}")
-
-        # Проход по элементам массива
         for i in range(gap, n):
             temp = arr[i]
             j = i
-            logging.debug(f"Вставка элемента {temp} на правильное место с разрывом {gap}")
 
-            # Сдвиг элементов вправо, пока не найдём правильное место для temp
+            # Выполняем сортировку вставками для элементов, разделённых разрывом
             while j >= gap and arr[j - gap] > temp:
-                logging.debug(f"Сдвиг {arr[j-gap]} вправо")
                 arr[j] = arr[j - gap]
                 j -= gap
-                visualize_sorting(arr, f"Сдвиг элемента {arr[j-gap]}")
+                iteration += 1
+
+                # Визуализируем процесс перемещения элементов
+                visualize_sorting(arr, f"Итерация {iteration}: разрыв {gap}", iteration, update_rate,
+                                  enable_visualization)
 
             arr[j] = temp
-            visualize_sorting(arr, f"Вставка элемента {temp} на правильное место")
+            iteration += 1
 
-        # Уменьшаем разрыв
-        gap //= 2
-        logging.debug(f"Уменьшение разрыва до {gap}")
+            # Визуализируем процесс вставки
+            visualize_sorting(arr, f"Итерация {iteration}: вставка элемента {temp}", iteration, update_rate,
+                              enable_visualization)
+
+        gap //= 2  # Уменьшаем разрыв
 
     logging.info(f"Конечный отсортированный массив: {arr}")
-    visualize_sorting(arr, "Конечный отсортированный массив")
-    plt.show(block=True)
+
+    # Финальная визуализация после завершения сортировки
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1,
+                      enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
+
     return arr

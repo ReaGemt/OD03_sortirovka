@@ -1,64 +1,69 @@
-# sorting_algorithms/quick_sort.py
 from visualization import visualize_sorting
 import logging
+import matplotlib.pyplot as plt
 
-def quick_sort(arr, start=0, end=None):
+
+def quick_sort(arr, start=0, end=None, iteration=0, enable_visualization=True, update_rate=10):
     """
-    Реализация быстрой сортировки с логированием и визуализацией.
-
-    Алгоритм делит массив на части, сравнивая элементы с опорным элементом (pivot).
-    Затем рекурсивно сортирует левую и правую части относительно pivot.
+    Реализация быстрой сортировки (Quick Sort) с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
     - start: начальный индекс
     - end: конечный индекс
-
-    Returns:
-    - Отсортированный массив
+    - iteration: текущая итерация для визуализации
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления визуализации
     """
     if end is None:
         end = len(arr) - 1
     if start >= end:
-        return arr
+        return iteration
 
-    logging.debug(f"Сортировка части массива от индекса {start} до {end}. Массив: {arr[start:end+1]}")
-
-    # Выбор опорного элемента и разделение массива
+    # Разделяем массив относительно опорного элемента
     pivot_index = partition(arr, start, end)
-    visualize_sorting(arr, f"Разделение с опорным элементом {arr[pivot_index]}")
+    iteration += 1
 
-    # Рекурсивная сортировка левой и правой частей массива
-    quick_sort(arr, start, pivot_index - 1)
-    quick_sort(arr, pivot_index + 1, end)
-    return arr
+    # Визуализируем процесс после разделения по опорному элементу
+    visualize_sorting(arr, f"Разделение по опорному элементу {arr[pivot_index]}", iteration, update_rate,
+                      enable_visualization)
+
+    # Рекурсивно сортируем левую часть
+    iteration = quick_sort(arr, start, pivot_index - 1, iteration, enable_visualization, update_rate)
+
+    # Визуализируем перед тем как перейти к правой части
+    visualize_sorting(arr, f"Левая часть отсортирована", iteration, update_rate, enable_visualization)
+
+    # Рекурсивно сортируем правую часть
+    iteration = quick_sort(arr, pivot_index + 1, end, iteration, enable_visualization, update_rate)
+
+    # Визуализируем после сортировки правой части
+    visualize_sorting(arr, f"Правая часть отсортирована", iteration, update_rate, enable_visualization)
+
+    return iteration
+
 
 def partition(arr, start, end):
     """
-    Функция для разделения массива относительно опорного элемента.
+    Функция для разделения массива на части относительно опорного элемента (pivot).
 
     Parameters:
     - arr: массив для сортировки
     - start: начальный индекс
     - end: конечный индекс
-
-    Returns:
-    - Индекс опорного элемента после разделения
     """
-    pivot = arr[end]  # Выбираем последний элемент как опорный (pivot)
-    logging.debug(f"Опорный элемент выбран: {pivot}")
-    i = start - 1  # Индекс для разделения элементов
+    pivot = arr[end]  # Опорный элемент
+    i = start - 1
 
-    # Проход по массиву и разделение на две части: меньше и больше pivot
     for j in range(start, end):
-        logging.debug(f"Сравниваем {arr[j]} с опорным элементом {pivot}")
         if arr[j] < pivot:
             i += 1
-            logging.debug(f"Меняем местами {arr[i]} и {arr[j]}")
-            arr[i], arr[j] = arr[j], arr[i]
-            visualize_sorting(arr, f"Перестановка: {arr[i]} и {arr[j]}")
-
-    # Помещаем опорный элемент на своё место
-    logging.debug(f"Помещаем опорный элемент {pivot} на позицию {i+1}")
+            arr[i], arr[j] = arr[j], arr[i]  # Обмен элементов
     arr[i + 1], arr[end] = arr[end], arr[i + 1]
     return i + 1
+
+
+# Финализация визуализации
+def finalize_visualization(enable_visualization=True):
+    if enable_visualization:
+        plt.show(block=True)
