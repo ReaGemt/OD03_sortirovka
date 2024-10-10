@@ -1,5 +1,7 @@
 # sorting_algorithms/main.py
 import time
+import logging
+import matplotlib
 from bubble_sort import bubble_sort
 from selection_sort import selection_sort
 from quick_sort import quick_sort
@@ -10,6 +12,10 @@ from counting_sort import counting_sort
 from radix_sort import radix_sort
 from cocktail_shaker_sort import cocktail_shaker_sort
 from shell_sort import shell_sort
+
+# Устанавливаем уровень логирования для библиотеки matplotlib на WARNING, чтобы избежать лишних сообщений DEBUG
+matplotlib_logger = logging.getLogger('matplotlib')
+matplotlib_logger.setLevel(logging.WARNING)
 
 # Массивы для тестирования
 arrays = {
@@ -69,8 +75,6 @@ def run_all_sorts():
 
 
 if __name__ == "__main__":
-    import logging
-
     # Настройка логирования
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
     run_all_sorts()
