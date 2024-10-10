@@ -1,4 +1,3 @@
-# sorting_algorithms/bubble_sort.py
 from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
@@ -45,10 +44,15 @@ def bubble_sort(arr, enable_visualization=True, update_rate=10):
             break
 
     end_time = time.time()
-    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
+    total_time = end_time - start_time  # Вычисляем общее время сортировки
+    logging.info(f"Время выполнения: {total_time:.4f} секунд")
 
     # Финальная визуализация после завершения сортировки
-    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1,
-                      enable_visualization=enable_visualization)
-    plt.show(block=True) if enable_visualization else None
+    if enable_visualization:
+        plt.clf()  # Очищаем график перед финальной визуализацией
+        plt.bar(range(len(arr)), arr, color='blue')  # Отображаем финальный отсортированный массив
+        plt.title(f"Конечный отсортированный массив\nВремя выполнения: {total_time:.4f} секунд")  # Добавляем время в заголовок
+        plt.draw()
+        plt.show(block=True)
+
     return arr

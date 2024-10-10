@@ -1,6 +1,7 @@
 from visualization import visualize_sorting
 import logging
 import matplotlib.pyplot as plt
+import time
 
 
 def counting_sort(arr, enable_visualization=True, update_rate=10):
@@ -14,6 +15,9 @@ def counting_sort(arr, enable_visualization=True, update_rate=10):
     - update_rate: частота обновления графиков (раз в N итераций)
     """
     logging.info(f"Начальный массив: {arr}")
+
+    # Замер времени начала сортировки
+    start_time = time.time()
 
     # Находим максимальное значение в массиве для создания диапазона
     max_val = max(arr)
@@ -55,11 +59,19 @@ def counting_sort(arr, enable_visualization=True, update_rate=10):
     for i in range(len(arr)):
         arr[i] = output[i]
 
-    logging.info(f"Конечный отсортированный массив: {arr}")
+    # Замер времени окончания сортировки
+    end_time = time.time()
+    total_time = end_time - start_time  # Вычисляем общее время выполнения сортировки
 
-    # Финальная визуализация после завершения сортировки
-    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1,
-                      enable_visualization=enable_visualization)
-    plt.show(block=True) if enable_visualization else None
+    logging.info(f"Конечный отсортированный массив: {arr}")
+    logging.info(f"Время выполнения: {total_time:.4f} секунд")
+
+    # Финальная визуализация после завершения сортировки с добавлением времени выполнения
+    if enable_visualization:
+        plt.clf()  # Очищаем график перед финальной визуализацией
+        plt.bar(range(len(arr)), arr, color='blue')  # Отображаем финальный отсортированный массив
+        plt.title(f"Конечный отсортированный массив\nВремя выполнения: {total_time:.4f} секунд")
+        plt.draw()
+        plt.show(block=True)
 
     return arr
