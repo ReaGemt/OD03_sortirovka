@@ -107,7 +107,7 @@ visualization_check = ttk.Checkbutton(main_frame, text="Включить виз�
 visualization_check.grid(column=0, row=2, columnspan=2, pady=5)
 
 # Поле для ввода частоты обновления графика
-update_rate_var = tk.StringVar(value="10")
+update_rate_var = tk.StringVar(value="5")
 update_rate_label = ttk.Label(main_frame, text="Частота обновления графика (N итераций):", background="#f8f8f8", font=("Arial", 12))
 update_rate_label.grid(column=0, row=3, sticky=tk.W, pady=5)
 
