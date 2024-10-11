@@ -1,3 +1,11 @@
+#Cложность алгоритма:
+# Лучший случай: O(n log n)
+# Средний случай: O(n log n)
+# Худший случай: O(n log n)
+# Пространственная сложность: O(n)
+# Линейная сложность: O(n) (слияние)
+# Логарифмическая сложность: O(log n) (деление массива)
+
 from visualization import visualize_sorting
 import logging
 import time

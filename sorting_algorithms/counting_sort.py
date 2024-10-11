@@ -1,3 +1,12 @@
+#Cложность алгоритма:
+# Лучший случай: O(n + k)
+# Средний случай: O(n + k)
+# Худший случай: O(n + k)
+# Пространственная сложность: O(n + k)
+# Линейная сложность: O(n) (подсчёт элементов)
+# Логарифмическая сложность: Нет
+
+
 from visualization import visualize_sorting
 import logging
 import matplotlib.pyplot as plt

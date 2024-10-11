@@ -1,7 +1,14 @@
+#Cложность алгоритма:
+# Лучший случай: O(n log n)
+# Средний случай: O(n log n)
+# Худший случай: O(n²)
+# Пространственная сложность: O(log n) (в среднем), O(n) (в худшем случае)
+# Линейная сложность: O(n) (разбиение массива)
+# Логарифмическая сложность: O(log n) (количество уровней рекурсии)
+
 from visualization import visualize_sorting
-import logging
 import matplotlib.pyplot as plt
-import time
+
 
 def quick_sort(arr, start=0, end=None, iteration=0, enable_visualization=True, update_rate=10):
     """
