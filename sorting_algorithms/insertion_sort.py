@@ -1,45 +1,33 @@
-# sorting_algorithms/insertion_sort.py
-from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
 import time
+import matplotlib.pyplot as plt
 
-def insertion_sort(arr):
+def insertion_sort(arr, enable_visualization=True, update_rate=10):
     """
     Реализация сортировки вставками с визуализацией и логированием.
 
-    Алгоритм проходит по каждому элементу и вставляет его на нужное место в отсортированной части массива.
-
     Parameters:
     - arr: массив для сортировки
-
-    Returns:
-    - Отсортированный массив
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков
     """
-    logging.info(f"Начальный массив: {arr}")
+    logging.info(f"Начальный массив: {arr}")  # Логирование начального массива
+    start_time = time.time()  # Замер времени начала сортировки
 
-    # Начало замера времени
-    start_time = time.time()
-    plt.ion()
-    fig = plt.figure()
-
-    # Проход по элементам массива, начиная со второго
+    iteration = 0
     for i in range(1, len(arr)):
         key = arr[i]  # Текущий элемент для вставки
         j = i - 1
-        logging.debug(f"Вставляем элемент {key}")
-
-        # Сдвиг элементов вправо, чтобы найти правильное место для вставки
-        while j >= 0 and arr[j] > key:
-            logging.debug(f"Сдвигаем {arr[j]} вправо")
-            arr[j + 1] = arr[j]
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]  # Сдвигаем элементы вправо
             j -= 1
+            iteration += 1
+            visualize_sorting(arr, f"Итерация {i}: вставка элемента {key}", iteration, update_rate, enable_visualization)
         arr[j + 1] = key
-        visualize_sorting(arr, f"Итерация {i+1}, вставка элемента {key}")
 
-    # Конец замера времени
-    end_time = time.time()
+    end_time = time.time()  # Замер времени окончания сортировки
     logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
-    visualize_sorting(arr, "Конечный отсортированный массив")
-    plt.show(block=True)
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
     return arr

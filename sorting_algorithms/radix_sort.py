@@ -1,79 +1,67 @@
-# sorting_algorithms/radix_sort.py
-from matplotlib import pyplot as plt
 from visualization import visualize_sorting
 import logging
+import time
+import matplotlib.pyplot as plt
 
-def counting_sort_for_radix(arr, exp):
+def counting_sort_for_radix(arr, exp, enable_visualization, update_rate, iteration):
     """
-    Вспомогательная функция для выполнения сортировки подсчётом для конкретного разряда.
+    Вспомогательная функция для сортировки поразрядным методом с использованием подсчёта (для каждого разряда).
 
     Parameters:
     - arr: массив для сортировки
-    - exp: текущий разряд (единицы, десятки, сотни и т.д.)
-
-    Returns:
-    - Отсортированный массив по текущему разряду
+    - exp: текущий разряд для сортировки
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков
+    - iteration: текущая итерация
     """
     n = len(arr)
-    output = [0] * n  # Массив для хранения отсортированных по разряду элементов
-    count = [0] * 10  # Массив для подсчёта количества цифр
+    output = [0] * n  # Массив для отсортированных элементов
+    count = [0] * 10  # Массив для подсчета по текущему разряду
 
-    logging.debug(f"Подсчёт количества элементов для разряда {exp}...")
-
-    # Подсчёт количества каждой цифры в текущем разряде
+    # Подсчёт количества элементов для текущего разряда
     for i in range(n):
-        index = (arr[i] // exp) % 10
-        count[index] += 1
-        visualize_sorting(count, f"Подсчёт для разряда {exp}, цифра {index}")
+        index = arr[i] // exp
+        count[index % 10] += 1
 
-    # Модификация count для хранения конечных позиций цифр
-    logging.debug(f"Модификация счётчика для позиций по разряду {exp}...")
+    # Изменяем count так, чтобы каждый элемент содержал сумму предыдущих
     for i in range(1, 10):
         count[i] += count[i - 1]
-        visualize_sorting(count, f"Обновление позиции для цифры {i}")
 
-    # Построение выходного массива на основе count
-    logging.debug(f"Построение отсортированного массива для разряда {exp}...")
+    # Заполняем выходной массив
     for i in range(n - 1, -1, -1):
-        index = (arr[i] // exp) % 10
-        output[count[index] - 1] = arr[i]
-        count[index] -= 1
-        visualize_sorting(output, f"Построение массива по разряду {exp}, элемент {arr[i]}")
+        index = arr[i] // exp
+        output[count[index % 10] - 1] = arr[i]
+        count[index % 10] -= 1
+        iteration += 1
 
-    # Копируем отсортированные элементы обратно в оригинальный массив
-    for i in range(n):
+    # Копируем отсортированный массив обратно в arr
+    for i in range(len(arr)):
         arr[i] = output[i]
-        visualize_sorting(arr, f"Копирование отсортированных элементов для разряда {exp}")
 
-def radix_sort(arr):
+    return iteration
+
+def radix_sort(arr, enable_visualization=True, update_rate=10):
     """
-    Реализация поразрядной сортировки с логированием и визуализацией.
-
-    Алгоритм сортирует числа по разрядам (единицы, десятки, сотни и т.д.).
+    Реализация поразрядной сортировки (Radix Sort) с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
-
-    Returns:
-    - Отсортированный массив
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков
     """
     logging.info(f"Начальный массив: {arr}")
+    start_time = time.time()
 
-    # Находим максимальный элемент для определения количества разрядов
-    max_val = max(arr)
-    exp = 1  # Начинаем с единиц (exp = 1)
+    max_val = max(arr)  # Находим максимальный элемент массива
+    iteration = 0
+    exp = 1  # Начинаем с младшего разряда
 
-    plt.ion()
-    fig = plt.figure()
-
-    # Сортировка по каждому разряду, начиная с единиц
     while max_val // exp > 0:
-        logging.debug(f"Сортировка по разряду {exp}...")
-        counting_sort_for_radix(arr, exp)
-        visualize_sorting(arr, f"Сортировка по разряду {exp}")
-        exp *= 10  # Переходим к следующему разряду (десятки, сотни и т.д.)
+        iteration = counting_sort_for_radix(arr, exp, enable_visualization, update_rate, iteration)
+        exp *= 10  # Переходим к следующему разряду
 
-    logging.info(f"Конечный отсортированный массив: {arr}")
-    visualize_sorting(arr, "Конечный отсортированный массив")
-    plt.show(block=True)
+    end_time = time.time()
+    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
     return arr

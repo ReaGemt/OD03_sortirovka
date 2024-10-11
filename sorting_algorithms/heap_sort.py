@@ -1,59 +1,69 @@
-# sorting_algorithms/heap_sort.py
 from visualization import visualize_sorting
 import logging
+import matplotlib.pyplot as plt
+import time
 
-def heap_sort(arr):
+def heap_sort(arr, enable_visualization=True, update_rate=10):
     """
-    Реализация пирамидальной сортировки с визуализацией и логированием.
-
-    Алгоритм преобразует массив в кучу (heap), затем последовательно извлекает наибольшие элементы из кучи.
+    Реализация пирамидальной сортировки (Heap Sort) с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
-
-    Returns:
-    - Отсортированный массив
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления графиков
     """
-    n = len(arr)
     logging.info(f"Начальный массив: {arr}")
+    start_time = time.time()
 
-    # Построение кучи
+    n = len(arr)
+    iteration = 0  # Счётчик итераций
+
+    # Построение кучи (перегруппировка массива)
     for i in range(n // 2 - 1, -1, -1):
-        logging.debug(f"Построение кучи: обработка индекса {i}")
-        heapify(arr, n, i)
+        heapify(arr, n, i, iteration, enable_visualization, update_rate)
 
-    # Извлечение элементов из кучи
-    for i in range(n-1, 0, -1):
-        logging.debug(f"Меняем местами {arr[0]} и {arr[i]}")
+    # Один за другим извлекаем элементы из кучи
+    for i in range(n - 1, 0, -1):
         arr[i], arr[0] = arr[0], arr[i]
-        visualize_sorting(arr, f"Извлечение максимального элемента {arr[i]}")
-        heapify(arr, i, 0)
+        logging.debug(f"Перемещение элемента {arr[i]} в конец массива")
+        iteration += 1
+        visualize_sorting(arr, f"Итерация {iteration}: перемещение корня", iteration, update_rate, enable_visualization)
+        heapify(arr, i, 0, iteration, enable_visualization, update_rate)
+
+    end_time = time.time()  # Конец отсчета времени
+    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
     return arr
 
-def heapify(arr, n, i):
+def heapify(arr, n, i, iteration, enable_visualization=True, update_rate=10):
     """
-    Преобразует поддерево массива в кучу, начиная с корня (i).
+    Функция для преобразования поддерева с корнем в элементе i в кучу.
 
     Parameters:
     - arr: массив
-    - n: количество элементов в куче
+    - n: размер кучи
     - i: индекс корня поддерева
+    - iteration: текущая итерация для визуализации
+    - enable_visualization: включать/выключать визуализацию
+    - update_rate: частота обновления визуализации
     """
     largest = i  # Инициализация наибольшего элемента как корня
-    left = 2 * i + 1  # Левый потомок
-    right = 2 * i + 2  # Правый потомок
+    left = 2 * i + 1  # Левый дочерний элемент
+    right = 2 * i + 2  # Правый дочерний элемент
 
-    # Если левый потомок больше корня
+    # Если левый дочерний элемент больше корня
     if left < n and arr[left] > arr[largest]:
         largest = left
 
-    # Если правый потомок больше наибольшего на данный момент
+    # Если правый дочерний элемент больше наибольшего элемента
     if right < n and arr[right] > arr[largest]:
         largest = right
 
     # Если наибольший элемент не корень
     if largest != i:
-        logging.debug(f"Меняем местами {arr[i]} и {arr[largest]}")
-        arr[i], arr[largest] = arr[largest], arr[i]
-        heapify(arr, n, largest)
-        visualize_sorting(arr, f"Перестройка кучи на индексе {i}")
+        arr[i], arr[largest] = arr[largest], arr[i]  # Меняем местами
+        logging.debug(f"Обмен элементов: {arr[i]} и {arr[largest]}")
+        iteration += 1
+        visualize_sorting(arr, f"Итерация {iteration}: heapify", iteration, update_rate, enable_visualization)
+        heapify(arr, n, largest, iteration, enable_visualization, update_rate)
