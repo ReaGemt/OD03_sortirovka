@@ -74,50 +74,72 @@ def run_selected_sort():
 root = tk.Tk()
 root.title("Sorting Algorithms")
 
+# Увеличиваем размер окна
+root.geometry("600x450")
+
+# Добавляем иконку в заголовок окна (замените путь на иконку, если она есть)
+# root.iconbitmap("icon.ico")  # Если у вас есть иконка, раскомментируйте эту строку
+
+# Задаем фон
+root.configure(bg="#f8f8f8")
+
+# Фрейм для размещения всех элементов
+main_frame = ttk.Frame(root, padding="10 10 10 10", relief="groove")
+main_frame.pack(fill="both", expand=True)
+
+# Заголовок
+header_label = ttk.Label(main_frame, text="Алгоритмы сортировки", font=("Helvetica", 18, "bold"), background="#f8f8f8")
+header_label.grid(column=0, row=0, columnspan=2, pady=(10, 20))
+
 # Выпадающий список для выбора алгоритма сортировки
 algorithm_var = tk.StringVar()
-algorithm_label = ttk.Label(root, text="Выберите алгоритм сортировки:")
-algorithm_label.pack(pady=5)
+algorithm_label = ttk.Label(main_frame, text="Выберите алгоритм сортировки:", background="#f8f8f8", font=("Arial", 12))
+algorithm_label.grid(column=0, row=1, sticky=tk.W, pady=5)
 
-algorithm_menu = ttk.Combobox(root, textvariable=algorithm_var)
+algorithm_menu = ttk.Combobox(main_frame, textvariable=algorithm_var, width=35)
 algorithm_menu['values'] = list(arrays.keys())  # Устанавливаем значения для выбора
 algorithm_menu.current(0)  # Выбираем первый алгоритм по умолчанию
-algorithm_menu.pack(pady=5)
+algorithm_menu.grid(column=1, row=1, pady=5)
 
 # Чекбокс для включения/выключения визуализации
 visualization_var = tk.BooleanVar(value=True)
-visualization_check = ttk.Checkbutton(root, text="Включить визуализацию", variable=visualization_var)
-visualization_check.pack(pady=5)
+visualization_check = ttk.Checkbutton(main_frame, text="Включить визуализацию", variable=visualization_var)
+visualization_check.grid(column=0, row=2, columnspan=2, pady=5)
 
 # Поле для ввода частоты обновления графика
 update_rate_var = tk.StringVar(value="10")
-update_rate_label = ttk.Label(root, text="Частота обновления графика (N итераций):")
-update_rate_label.pack(pady=5)
+update_rate_label = ttk.Label(main_frame, text="Частота обновления графика (N итераций):", background="#f8f8f8", font=("Arial", 12))
+update_rate_label.grid(column=0, row=3, sticky=tk.W, pady=5)
 
-update_rate_entry = ttk.Entry(root, textvariable=update_rate_var)
-update_rate_entry.pack(pady=5)
+update_rate_entry = ttk.Entry(main_frame, textvariable=update_rate_var, width=10)
+update_rate_entry.grid(column=1, row=3, pady=5)
 
 # Добавляем возможность выбора уровня логирования
 log_level_var = tk.StringVar()
-log_level_label = ttk.Label(root, text="Выберите уровень логирования:")
-log_level_label.pack(pady=5)
+log_level_label = ttk.Label(main_frame, text="Выберите уровень логирования:", background="#f8f8f8", font=("Arial", 12))
+log_level_label.grid(column=0, row=4, sticky=tk.W, pady=5)
 
-log_level_menu = ttk.Combobox(root, textvariable=log_level_var)
+log_level_menu = ttk.Combobox(main_frame, textvariable=log_level_var, width=35)
 log_level_menu['values'] = ['DEBUG', 'INFO']  # Добавляем значения для уровня логирования
 log_level_menu.current(1)  # INFO по умолчанию
-log_level_menu.pack(pady=5)
+log_level_menu.grid(column=1, row=4, pady=5)
 
 # Кнопка для настройки уровня логирования
-set_log_button = ttk.Button(root, text="Установить уровень логирования",
+set_log_button = ttk.Button(main_frame, text="Установить уровень логирования",
                             command=lambda: set_logging_level(getattr(logging, log_level_var.get())))
-set_log_button.pack(pady=5)
+set_log_button.grid(column=0, row=5, columnspan=2, pady=10)
 
 # Кнопка для запуска сортировки
-run_button = ttk.Button(root, text="Запустить сортировку", command=run_selected_sort)
-run_button.pack(pady=20)
+run_button = ttk.Button(main_frame, text="Запустить сортировку", command=run_selected_sort)
+run_button.grid(column=0, row=6, columnspan=2, pady=20)
 
 # Настройка логирования по умолчанию (INFO уровень)
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+# Настраиваем стили для кнопок и элементов
+style = ttk.Style()
+style.configure("TButton", font=("Arial", 11), padding=6, background="#4CAF50", foreground="black")  # Изменили цвет текста на черный
+style.map("TButton", background=[('active', '#45a049')], foreground=[('active', 'black')])  # Цвет текста при наведении тоже черный
 
 # Запуск главного цикла интерфейса
 root.mainloop()
