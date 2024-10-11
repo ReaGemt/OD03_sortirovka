@@ -3,24 +3,19 @@ import logging
 import matplotlib.pyplot as plt
 import time
 
-
 def heap_sort(arr, enable_visualization=True, update_rate=10):
     """
-    Реализация пирамидальной сортировки (Heap Sort) с возможностью включения/выключения визуализации
-    и контролем частоты обновления графиков.
+    Реализация пирамидальной сортировки (Heap Sort) с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
     - enable_visualization: включать/выключать визуализацию
-    - update_rate: частота обновления графиков (раз в N итераций)
+    - update_rate: частота обновления графиков
     """
     logging.info(f"Начальный массив: {arr}")
-
-    # Замер времени начала сортировки
     start_time = time.time()
 
     n = len(arr)
-    plt.ion() if enable_visualization else None
     iteration = 0  # Счётчик итераций
 
     # Построение кучи (перегруппировка массива)
@@ -29,34 +24,17 @@ def heap_sort(arr, enable_visualization=True, update_rate=10):
 
     # Один за другим извлекаем элементы из кучи
     for i in range(n - 1, 0, -1):
-        # Перемещаем текущий корень в конец
         arr[i], arr[0] = arr[0], arr[i]
         logging.debug(f"Перемещение элемента {arr[i]} в конец массива")
         iteration += 1
-
-        # Визуализация после каждого перемещения элемента
         visualize_sorting(arr, f"Итерация {iteration}: перемещение корня", iteration, update_rate, enable_visualization)
-
-        # Вызываем heapify на уменьшенной куче
         heapify(arr, i, 0, iteration, enable_visualization, update_rate)
 
-    # Замер времени окончания сортировки
-    end_time = time.time()
-    total_time = end_time - start_time  # Вычисляем общее время выполнения сортировки
-
-    logging.info(f"Конечный отсортированный массив: {arr}")
-    logging.info(f"Время выполнения: {total_time:.4f} секунд")
-
-    # Финальная визуализация после завершения сортировки с добавлением времени выполнения
-    if enable_visualization:
-        plt.clf()  # Очищаем график перед финальной визуализацией
-        plt.bar(range(len(arr)), arr, color='blue')  # Отображаем финальный отсортированный массив
-        plt.title(f"Конечный отсортированный массив\nВремя выполнения: {total_time:.4f} секунд")
-        plt.draw()
-        plt.show(block=True)
-
+    end_time = time.time()  # Конец отсчета времени
+    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None
     return arr
-
 
 def heapify(arr, n, i, iteration, enable_visualization=True, update_rate=10):
     """
@@ -85,12 +63,7 @@ def heapify(arr, n, i, iteration, enable_visualization=True, update_rate=10):
     # Если наибольший элемент не корень
     if largest != i:
         arr[i], arr[largest] = arr[largest], arr[i]  # Меняем местами
-
         logging.debug(f"Обмен элементов: {arr[i]} и {arr[largest]}")
-
-        # Визуализация после каждого обмена
         iteration += 1
         visualize_sorting(arr, f"Итерация {iteration}: heapify", iteration, update_rate, enable_visualization)
-
-        # Рекурсивно преобразуем поддерево в кучу
         heapify(arr, n, largest, iteration, enable_visualization, update_rate)

@@ -1,7 +1,7 @@
 from visualization import visualize_sorting
 import logging
+import time
 import matplotlib.pyplot as plt
-
 
 def shell_sort(arr, enable_visualization=True, update_rate=10):
     """
@@ -13,43 +13,27 @@ def shell_sort(arr, enable_visualization=True, update_rate=10):
     - update_rate: частота обновления графиков (раз в N итераций)
     """
     logging.info(f"Начальный массив: {arr}")
+    start_time = time.time()
 
     n = len(arr)
-    gap = n // 2  # Начальное значение разрыва (gap)
-    iteration = 0  # Счётчик для отслеживания количества итераций
+    gap = n // 2  # Начальный разрыв
+    iteration = 0
 
-    plt.ion() if enable_visualization else None
-
-    # Уменьшаем разрыв, пока он не станет 0
     while gap > 0:
         for i in range(gap, n):
             temp = arr[i]
             j = i
-
-            # Выполняем сортировку вставками для элементов, разделённых разрывом
+            # Сдвигаем элементы вправо, чтобы вставить текущий элемент на нужную позицию
             while j >= gap and arr[j - gap] > temp:
                 arr[j] = arr[j - gap]
                 j -= gap
                 iteration += 1
-
-                # Визуализируем процесс перемещения элементов
-                visualize_sorting(arr, f"Итерация {iteration}: разрыв {gap}", iteration, update_rate,
-                                  enable_visualization)
-
+                visualize_sorting(arr, f"Итерация {iteration}: сортировка с разрывом {gap}", iteration, update_rate, enable_visualization)
             arr[j] = temp
-            iteration += 1
-
-            # Визуализируем процесс вставки
-            visualize_sorting(arr, f"Итерация {iteration}: вставка элемента {temp}", iteration, update_rate,
-                              enable_visualization)
-
         gap //= 2  # Уменьшаем разрыв
 
-    logging.info(f"Конечный отсортированный массив: {arr}")
-
-    # Финальная визуализация после завершения сортировки
-    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1,
-                      enable_visualization=enable_visualization)
+    end_time = time.time()
+    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
     plt.show(block=True) if enable_visualization else None
-
     return arr

@@ -1,73 +1,57 @@
 from visualization import visualize_sorting
 import logging
+import time
 import matplotlib.pyplot as plt
 
-
-def merge_sort(arr, iteration=0, enable_visualization=True, update_rate=10):
+def merge_sort(arr, enable_visualization=True, update_rate=10, iteration=0):
     """
-    Реализация сортировки слиянием с возможностью включения/выключения визуализации
-    и контролем частоты обновления графиков.
+    Реализация сортировки слиянием с визуализацией и логированием.
 
     Parameters:
     - arr: массив для сортировки
-    - iteration: текущая итерация для визуализации
     - enable_visualization: включать/выключать визуализацию
-    - update_rate: частота обновления графиков (раз в N итераций)
+    - update_rate: частота обновления графиков
+    - iteration: текущая итерация для визуализации
     """
-    logging.info(f"Начальный массив: {arr}")
-
-    # Включаем интерактивный режим matplotlib
-    plt.ion() if enable_visualization else None
+    logging.info(f"Начальный массив: {arr}")  # Логирование начального состояния массива
+    start_time = time.time()  # Замер времени начала сортировки
 
     if len(arr) > 1:
         mid = len(arr) // 2  # Находим середину массива
-        left_half = arr[:mid]  # Левая половина
-        right_half = arr[mid:]  # Правая половина
+        L = arr[:mid]  # Левая часть
+        R = arr[mid:]  # Правая часть
 
-        # Рекурсивно сортируем обе половины
-        iteration = merge_sort(left_half, iteration, enable_visualization, update_rate)
-        iteration = merge_sort(right_half, iteration, enable_visualization, update_rate)
+        # Рекурсивно сортируем левую и правую части
+        iteration = merge_sort(L, enable_visualization, update_rate, iteration)
+        iteration = merge_sort(R, enable_visualization, update_rate, iteration)
 
+        # Слияние отсортированных частей
         i = j = k = 0
-
-        # Слияние отсортированных половин
-        while i < len(left_half) and j < len(right_half):
-            iteration += 1
-            if left_half[i] < right_half[j]:
-                arr[k] = left_half[i]
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
                 i += 1
             else:
-                arr[k] = right_half[j]
+                arr[k] = R[j]
                 j += 1
             k += 1
-
-            # Визуализируем процесс слияния
+            iteration += 1
             visualize_sorting(arr, f"Итерация {iteration}: слияние", iteration, update_rate, enable_visualization)
 
-        # Добавляем оставшиеся элементы левой половины (если есть)
-        while i < len(left_half):
-            arr[k] = left_half[i]
+        while i < len(L):
+            arr[k] = L[i]
             i += 1
             k += 1
             iteration += 1
-            visualize_sorting(arr, f"Итерация {iteration}: добавление левого", iteration, update_rate,
-                              enable_visualization)
 
-        # Добавляем оставшиеся элементы правой половины (если есть)
-        while j < len(right_half):
-            arr[k] = right_half[j]
+        while j < len(R):
+            arr[k] = R[j]
             j += 1
             k += 1
             iteration += 1
-            visualize_sorting(arr, f"Итерация {iteration}: добавление правого", iteration, update_rate,
-                              enable_visualization)
 
-    logging.info(f"Конечный отсортированный массив: {arr}")
-
+    end_time = time.time()  # Конец отсчета времени
+    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
+    visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
+    plt.show(block=True) if enable_visualization else None  # Финальная визуализация
     return iteration
-
-
-# Финализация визуализации
-def finalize_visualization(enable_visualization=True):
-    if enable_visualization:
-        plt.show(block=True)

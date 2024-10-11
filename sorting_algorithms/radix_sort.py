@@ -1,53 +1,44 @@
 from visualization import visualize_sorting
 import logging
+import time
 import matplotlib.pyplot as plt
 
-def counting_sort_for_radix(arr, exp, iteration, enable_visualization=True, update_rate=10):
+def counting_sort_for_radix(arr, exp, enable_visualization, update_rate, iteration):
     """
-    Вспомогательная функция для сортировки по текущему разряду с использованием
-    сортировки подсчётом для поразрядной сортировки.
+    Вспомогательная функция для сортировки поразрядным методом с использованием подсчёта (для каждого разряда).
 
     Parameters:
     - arr: массив для сортировки
-    - exp: текущий разряд
-    - iteration: текущая итерация для визуализации
+    - exp: текущий разряд для сортировки
     - enable_visualization: включать/выключать визуализацию
-    - update_rate: частота обновления графиков (раз в N итераций)
+    - update_rate: частота обновления графиков
+    - iteration: текущая итерация
     """
     n = len(arr)
-    output = [0] * n
-    count = [0] * 10  # Инициализация подсчета для цифр от 0 до 9
+    output = [0] * n  # Массив для отсортированных элементов
+    count = [0] * 10  # Массив для подсчета по текущему разряду
 
-    # Подсчитываем количество вхождений для каждого числа в текущем разряде
+    # Подсчёт количества элементов для текущего разряда
     for i in range(n):
-        index = (arr[i] // exp) % 10
-        count[index] += 1
-        iteration += 1
-        # Визуализируем процесс подсчёта
-        visualize_sorting(count, f"Итерация {iteration}: подсчёт для разряда {exp}", iteration, update_rate, enable_visualization)
+        index = arr[i] // exp
+        count[index % 10] += 1
 
-    # Модифицируем count, чтобы хранить позиции элементов
+    # Изменяем count так, чтобы каждый элемент содержал сумму предыдущих
     for i in range(1, 10):
         count[i] += count[i - 1]
-        iteration += 1
-        # Визуализируем процесс модификации счётчика
-        visualize_sorting(count, f"Итерация {iteration}: модификация счётчика для разряда {exp}", iteration, update_rate, enable_visualization)
 
-    # Строим выходной массив
+    # Заполняем выходной массив
     for i in range(n - 1, -1, -1):
-        index = (arr[i] // exp) % 10
-        output[count[index] - 1] = arr[i]
-        count[index] -= 1
+        index = arr[i] // exp
+        output[count[index % 10] - 1] = arr[i]
+        count[index % 10] -= 1
         iteration += 1
-        # Визуализируем процесс построения выходного массива
-        visualize_sorting(output, f"Итерация {iteration}: построение выходного массива для разряда {exp}", iteration, update_rate, enable_visualization)
 
     # Копируем отсортированный массив обратно в arr
-    for i in range(n):
+    for i in range(len(arr)):
         arr[i] = output[i]
 
     return iteration
-
 
 def radix_sort(arr, enable_visualization=True, update_rate=10):
     """
@@ -56,26 +47,21 @@ def radix_sort(arr, enable_visualization=True, update_rate=10):
     Parameters:
     - arr: массив для сортировки
     - enable_visualization: включать/выключать визуализацию
-    - update_rate: частота обновления графиков (раз в N итераций)
+    - update_rate: частота обновления графиков
     """
     logging.info(f"Начальный массив: {arr}")
+    start_time = time.time()
 
-    # Находим максимальное значение для определения количества разрядов
-    max_val = max(arr)
-    exp = 1  # Начинаем с младшего разряда (единицы)
-    iteration = 0  # Для отслеживания итераций
+    max_val = max(arr)  # Находим максимальный элемент массива
+    iteration = 0
+    exp = 1  # Начинаем с младшего разряда
 
-    plt.ion() if enable_visualization else None
-
-    # Выполняем сортировку для каждого разряда
     while max_val // exp > 0:
-        iteration = counting_sort_for_radix(arr, exp, iteration, enable_visualization, update_rate)
+        iteration = counting_sort_for_radix(arr, exp, enable_visualization, update_rate, iteration)
         exp *= 10  # Переходим к следующему разряду
 
-    logging.info(f"Конечный отсортированный массив: {arr}")
-
-    # Финальная визуализация после завершения сортировки
+    end_time = time.time()
+    logging.info(f"Время выполнения: {end_time - start_time:.4f} секунд")
     visualize_sorting(arr, "Конечный отсортированный массив", iteration, update_rate=1, enable_visualization=enable_visualization)
     plt.show(block=True) if enable_visualization else None
-
     return arr
